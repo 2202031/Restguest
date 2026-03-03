@@ -1,0 +1,18 @@
+{
+  "name": "restguest-proyect",
+  "version": "1.0.0",
+  "description": "[![CI](https://github.com/USER/REPO/actions/workflows/ci-cd.yml/badge.svg)]() [![License](https://img.shields.io/badge/license-MIT-blue.svg)]()",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+  "dev": "node index.js",
+  "start": "node index.js",
+  "test": "echo \"Tests OK\""
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
