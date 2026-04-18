@@ -11,12 +11,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Use Node
-        uses: actions/setup-node@v3
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
         with:
-          node-version: 18
+          distribution: temurin
+          java-version: 17
 
-      - run: npm install
-      - run: npm run test
+      - name: Run backend tests
+        run: |
+          cd back/RestGuestBack-main
+          chmod +x mvnw
+          ./mvnw test
+
+      - name: Start backend
+        run: |
+          cd back/RestGuestBack-main
+          nohup ./mvnw spring-boot:run > app.log 2>&1 &
+
+      - name: Wait for backend
+        run: sleep 25
+
+      - name: Smoke test
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/api/auth/test)
+          if [ "$STATUS" -eq 200 ]; then
+            echo "Smoke test OK"
+          else
+            echo "Smoke test failed with status $STATUS"
+            exit 1
+          fi
