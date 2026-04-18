@@ -23,13 +23,12 @@ jobs:
       - name: Run backend tests
         run: |
           cd src/back/RestGuestBack-main
-          chmod +x mvnw
-          ./mvnw test
+          mvn test
 
       - name: Start backend
         run: |
           cd src/back/RestGuestBack-main
-          nohup ./mvnw spring-boot:run > app.log 2>&1 &
+          nohup mvn spring-boot:run > app.log 2>&1 &
 
       - name: Wait for backend
         run: sleep 25
