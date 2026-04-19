@@ -23,15 +23,20 @@ jobs:
       - name: Run backend tests
         run: |
           cd src/back/RestGuestBack-main
-          mvn test
+          mvn test -Dspring.profiles.active=test
 
       - name: Start backend
         run: |
           cd src/back/RestGuestBack-main
-          nohup mvn spring-boot:run > app.log 2>&1 &
-          sleep 35
+          nohup mvn spring-boot:run -Dspring-boot.run.profiles=test > app.log 2>&1 &
+          sleep 45
           echo "===== BACKEND LOG ====="
           cat app.log
+
+      - name: Check if backend is listening
+        run: |
+          echo "===== PORT CHECK ====="
+          ss -tuln | grep 8081 || true
 
       - name: Smoke test
         run: |
