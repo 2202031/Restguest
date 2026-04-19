@@ -29,16 +29,17 @@ jobs:
         run: |
           cd src/back/RestGuestBack-main
           nohup mvn spring-boot:run > app.log 2>&1 &
-
-      - name: Wait for backend
-        run: sleep 25
+          sleep 35
+          echo "===== BACKEND LOG ====="
+          cat app.log
 
       - name: Smoke test
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/api/auth/test)
-          if [ "$STATUS" -eq 200 ]; then
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/api/auth/test || true)
+          echo "HTTP status: $STATUS"
+          if [ "$STATUS" = "200" ]; then
             echo "Smoke test OK"
           else
-            echo "Smoke test failed with status $STATUS"
+            echo "Smoke test failed"
             exit 1
           fi
