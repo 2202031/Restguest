@@ -1,134 +1,139 @@
-# Proyecto Integrador - RestGest
+# RestGuest – Sistema SaaS para Gestión de Restaurantes
 
 [![CI](https://github.com/2202031/Restguest/actions/workflows/ci-cd.yml/badge.svg)]
 [![Deploy](https://github.com/2202031/Restguest/actions/workflows/deploy.yml/badge.svg)]
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)]
 
-Sistema web para la gestión integral de restaurantes desarrollado como proyecto integrador académico.
+RestGuest es una aplicación web SaaS orientada a la gestión interna de restaurantes, enfocada en reservas, clientes, lealtad e integración operativa.
+
+Desarrollado bajo metodologías ágiles (Scrum + XP) como proyecto académico de la Universidad Tecnológica de la Riviera Maya.
 
 ---
 
-## Tabla de Contenidos
+## Descripción
 
-* [Requisitos](#requisitos)
-* [Instalación](#instalación)
-* [Uso](#uso)
-* [Tests](#tests)
-* [Stack Tecnológico](#stack-tecnológico)
-* [Deployment](#deployment)
-* [Autores](#autores)
-* [Licencia](#licencia)
+RestGuest permite a los restaurantes optimizar la gestión de clientes, reservas y análisis de datos en una sola plataforma centralizada.
+
+El sistema está diseñado para:
+- Mejorar la eficiencia operativa
+- Reducir errores en la gestión manual
+- Incrementar la retención de clientes mediante programas de lealtad
+- Facilitar la toma de decisiones con analítica
+
+---
+
+## Arquitectura
+
+Arquitectura basada en servicios con separación frontend/backend:
+
+- **Frontend:** Next.js (React)
+- **Backend:** Spring Boot (API REST)
+- **Base de datos:** PostgreSQL
+- **Infraestructura:** Microsoft Azure (autenticación y almacenamiento)
+- **Patrón arquitectónico:** MVC + Repository + DTO + Factory
 
 ---
 
 ## Requisitos
 
-* Node.js 18+
-* PostgreSQL 15+
-* Docker (opcional)
-* Git
+- Node.js 18+
+- Java 17+
+- PostgreSQL 15+
+- Docker (opcional)
+- Git
 
 ---
 
-## Instalación
+## Instalación y ejecución local
+
+### 1. Clonar repositorio
+```bash
+git clone https://github.com/2202031/Restguest.git
+cd Restguest
+```
+
+### 2. Configurar variables de entorno
 
 ```bash
-# Clonar repositorio
-git clone https://github.com/2202031/Restguest.git
-
-# Entrar al proyecto
-cd Restguest
-
-# Instalar dependencias
-npm install
-
-# Copiar variables de entorno
 cp .env.example .env
+```
 
-# Ejecutar migraciones (si aplica)
-npm run migrate
+### 3. Levantar Backend (Spring Boot)
 
-# Iniciar servidor en desarrollo
+```bash
+cd backend
+./mvnw spring-boot:run
+```
+
+### 4. Levantar Frontend (Next.js)
+
+```bash
+cd frontend
+npm install
 npm run dev
 ```
 
-Carrera: Ingeniería en Gestión y Desarrollo de Software
-Asignatura: Gestión del Proceso de Desarrollo de Software
-Proyecto Integrador – RestGest
+### 5. Acceso al sistema
+
+`http://localhost:3000`
 
 ---
 
-## Uso
+## Funcionalidades principales
 
-El sistema permite:
-
-* Gestión de restaurantes
-* Administración de clientes
-* Control de reservas
-* Gestión de usuarios y accesos
-* Panel administrativo web
-
-Acceder desde:
-
-```
-http://localhost:3000
-```
+- Sistema de reservas internas
+- Gestión de clientes
+- Programa de lealtad
+- Integración con POS
+- Análisis de datos operativos
+- Gestión de usuarios y permisos
 
 ---
 
-## Tests
+## Pruebas
 
 ```bash
-# Tests unitarios
-npm run test:unit
+# Frontend
+npm run test
 
-# Tests de integración
-npm run test:integration
-
-# Cobertura de pruebas
-npm run test:coverage
+# Backend
+./mvnw test
 ```
 
 ---
 
-## Stack Tecnológico
+## CI/CD
 
-* **Frontend:** Next.js + React
-* **Backend:** Node.js + Express / Spring Boot (según módulo)
-* **Base de datos:** PostgreSQL
-* **Contenedores:** Docker
-* **Testing:** Jest / Cypress
-* **CI/CD:** GitHub Actions
+El proyecto utiliza **GitHub Actions** para:
+
+- Integración continua (tests automáticos)
+- Construcción de artefactos
+- Despliegue automatizado
+
+Ubicación:
+
+`.github/workflows/`
 
 ---
 
-## Deployment
+## Metodología
 
-El proyecto utiliza integración y despliegue continuo mediante **GitHub Actions**:
-
-* Ejecuta pruebas automáticamente
-* Construye contenedores Docker
-* Realiza despliegue automático (según configuración)
-
-Workflows ubicados en:
-
-```
-.github/workflows/
-```
+- **Gestión:** Scrum  
+- **Desarrollo:** Extreme Programming (XP)
 
 ---
 
 ## Autores
 
-* TSU. Brian Osorio Canul – 2202031
-* TSU. Carlos Arturo Pablo Álvarez – 2202067
-* TSU. Claudio Alberto Xool Castillo – 2202069
-* TSU. Emmanuel May Gutiérrez – 2202106
-* TSU. Ingrid Hernández Suaste – 2202047
-* TSU. Jafet Benjamín Peralta Jiménez – 2202003
+- Brian Osorio Canul
+- Carlos Arturo Pablo Álvarez
+- Claudio Alberto Xool Castillo
+- Emmanuel May Gutiérrez
+- Ingrid Hernández Suaste
+- Jafet Benjamín Peralta Jiménez
 
 ---
 
 ## Licencia
 
-Este proyecto se distribuye bajo la licencia MIT.
+MIT License
