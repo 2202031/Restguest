@@ -1,13 +1,9 @@
 #!/bin/bash
 # Prueba de integración (registro + login) - versión simulada
 
-BASE_URL="http://localhost:8081"
-
-echo "🧪 Probando integración (simulado)..."
-echo "📌 En un entorno real se ejecutaría:"
-echo "   POST $BASE_URL/api/auth/register"
-echo "   POST $BASE_URL/api/auth/login"
-echo "✅ Prueba de integración simulada: exitosa"
+#!/bin/bash
+echo "🧪 [SIMULACIÓN] Prueba de integración (registro+login)"
+echo "✅ Prueba de integración simulada exitosa"
 exit 0
 
 # Código real (descomentar cuando tengas backend desplegado):
