@@ -1,4 +1,4 @@
-import SoporteSection from "./SoporteSection";
+import { SoporteSection } from "./SoporteSection";
 
 export default function SoportePage() {
     return (
