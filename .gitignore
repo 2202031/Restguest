@@ -27,3 +27,23 @@ coverage/
 
 # Docker
 .docker/data/
+
+# Backend (Java / Maven)
+**/target/
+**/*.class
+*.jar
+*.war
+*.ear
+**/pom.xml.tag
+**/pom.xml.releaseBackup
+**/pom.xml.versionsBackup
+**/pom.xml.next
+**/release.properties
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+
+# Secrets locales
+backend-scripts/.env
+*.env.local
+*.env.*.local

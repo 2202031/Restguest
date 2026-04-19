@@ -3,16 +3,19 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
-import bcrypt from "bcryptjs";
 
 export default function LoginForm() {
   const router = useRouter();
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081";
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   const validate = () => {
     const newErrors = {};
@@ -25,8 +28,6 @@ export default function LoginForm() {
 
     if (!form.password) {
       newErrors.password = "La contraseña es obligatoria.";
-    } else if (form.password.length < 8) {
-      newErrors.password = "La contraseña debe tener al menos 8 caracteres.";
     }
 
     setErrors(newErrors);
@@ -35,44 +36,48 @@ export default function LoginForm() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setLoginError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    // Obtener usuario guardado
-    const savedUser = JSON.parse(localStorage.getItem("user"));
+    setLoading(true);
+    setLoginError("");
 
-    if (!savedUser) {
-      setErrors({ email: "No existe una cuenta con este correo." });
-      return;
+    try {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Credenciales incorrectas");
+        }
+        throw new Error("Error al iniciar sesión");
+      }
+
+      const token = await response.text(); // El backend devuelve el JWT como texto
+
+      // Guardar el token JWT
+      localStorage.setItem("token", token);
+      localStorage.setItem("userEmail", form.email);
+
+      // Redirigir al dashboard
+      router.push("/dashboard");
+    } catch (error) {
+      setLoginError(error.message);
+    } finally {
+      setLoading(false);
     }
-
-    if (savedUser.email !== form.email) {
-      setErrors({ email: "El correo no coincide con ninguna cuenta registrada." });
-      return;
-    }
-
-    // Comparar contraseña usando bcrypt
-    const passwordMatch = await bcrypt.compare(form.password, savedUser.password);
-
-    if (!passwordMatch) {
-      setErrors({ password: "La contraseña es incorrecta." });
-      return;
-    }
-
-    // Crear sesión
-    localStorage.setItem(
-      "session",
-      JSON.stringify({
-        active: true,
-        email: savedUser.email,
-        name: savedUser.fullname,
-      })
-    );
-
-    router.push("/dashboard");
   };
 
   const particlesInit = useCallback(async (engine) => {
@@ -151,6 +156,12 @@ export default function LoginForm() {
             <h2 className="text-[#0A0A0A] text-2xl font-semibold">Bienvenido, inicia sesión</h2>
           </div>
 
+          {loginError && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              {loginError}
+            </div>
+          )}
+
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-[#59554E] font-medium mb-1">Correo Electrónico</label>
@@ -160,6 +171,7 @@ export default function LoginForm() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder="tucorreo@ejemplo.com"
+                disabled={loading}
                 className={`w-full border rounded-md p-2 focus:outline-none ${
                   errors.email
                     ? "border-red-400 focus:border-red-500"
@@ -177,6 +189,7 @@ export default function LoginForm() {
                 value={form.password}
                 onChange={handleChange}
                 placeholder="••••••••"
+                disabled={loading}
                 className={`w-full border rounded-md p-2 focus:outline-none ${
                   errors.password
                     ? "border-red-400 focus:border-red-500"
@@ -188,9 +201,10 @@ export default function LoginForm() {
 
             <button
               type="submit"
-              className="w-full bg-[#A1C1BE] hover:bg-[#89B1AC] text-[#FFFF] font-medium rounded-md p-2 transition-colors"
+              disabled={loading}
+              className="w-full bg-[#A1C1BE] hover:bg-[#89B1AC] text-[#FFFF] font-medium rounded-md p-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Iniciar sesión
+              {loading ? "Iniciando sesión..." : "Iniciar sesión"}
             </button>
           </form>
 

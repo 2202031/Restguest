@@ -2,11 +2,14 @@ package aplicacionpino.demo.security;
 
 import aplicacionpino.demo.model.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Collection;
 import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
+    
     private final User user;
     
     public CustomUserDetails(User user) {
@@ -15,42 +18,41 @@ public class CustomUserDetails implements UserDetails {
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Si tu User tiene roles, conviértelos aquí. Ejemplo básico:
-        return Collections.emptyList(); 
-        // Si tienes roles: return user.getRoles().stream().map(SimpleGrantedAuthority::new).toList();
+        // Asignar rol basado en rol_id
+        String role = user.getRolId() != null && user.getRolId() == 1 ? "USER" : "ADMIN";
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword(); // Debe devolver la contraseña hasheada
+        return user.getContraseña(); // 👈 Cambiado a getContraseña()
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername(); // O el campo que uses como identificador
+        return user.getEmail(); // 👈 Cambiado a getEmail() (login con email)
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // Cambia a false si implementas lógica de expiración
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // Cambia a false para bloquear cuentas
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // Útil para expiración de contraseñas
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return user.isEnabled(); // Asume que tu User tiene un campo 'enabled'
+        return user.getActiva() != null ? user.getActiva() : true; // 👈 Cambiado a getActiva()
     }
     
-    // Método adicional para acceder al User original si lo necesitas
     public User getUser() {
         return user;
     }
