@@ -18,7 +18,7 @@ export default function Hero() {
                 </h1>
 
                 <p className="text-xl text-[#59554E]/80 font-medium max-w-md mb-12 leading-relaxed">
-                    Arquitectura de software epica diseñada para orquestar cada movimiento de tu piso y cocina sin fricción.
+                    Arquitectura de software especialmente diseñada para orquestar cada movimiento de tu piso y cocina sin fricción.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4">
