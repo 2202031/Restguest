@@ -7,6 +7,9 @@ import { loadSlim } from "tsparticles-slim";
 export default function RegisterForm() {
   const router = useRouter();
 
+  // ✅ URL del backend desde variables de entorno
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081";
+
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
@@ -16,6 +19,7 @@ export default function RegisterForm() {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   // Manejo de inputs
   const handleChange = (e) => {
@@ -68,33 +72,51 @@ export default function RegisterForm() {
     e.preventDefault();
     if (!validate()) return;
 
+    setLoading(true);
+
     try {
-      const response = await fetch("http://localhost:8081/api/auth/register", {
+      // Combinar nombre y apellido en un solo campo "nombre"
+      const nombreCompleto = `${form.nombre} ${form.apellido}`.trim();
+
+      console.log("📤 Enviando registro a:", `${API_URL}/api/auth/register`);
+      console.log("📦 Datos:", { nombre: nombreCompleto, email: form.email });
+
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nombre: form.nombre,
-          apellido: form.apellido,
+          nombre: nombreCompleto,
           email: form.email,
-          password: form.password, // sin encriptar, el backend lo hará
+          contraseña: form.password,
         }),
       });
 
       if (!response.ok) {
-        alert("Error al registrar. Verifica tus datos.");
+        const errorText = await response.text();
+        console.error("❌ Error del servidor:", errorText);
+        
+        // Intentar parsear el error como JSON
+        try {
+          const errorData = JSON.parse(errorText);
+          alert(`Error al registrar: ${errorData.message || "Verifica tus datos."}`);
+        } catch {
+          alert("Error al registrar. Verifica tus datos.");
+        }
         return;
       }
 
       const data = await response.json();
-      console.log("Registro exitoso:", data);
+      console.log("✅ Registro exitoso:", data);
 
-      alert("Cuenta creada exitosamente ✨");
+      alert("🎉 Cuenta creada exitosamente ✨");
       router.push("/login");
     } catch (error) {
-      console.error("Error en el registro:", error);
+      console.error("❌ Error en el registro:", error);
       alert("No se pudo conectar con el servidor.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -158,6 +180,7 @@ export default function RegisterForm() {
                   value={form.nombre}
                   onChange={handleChange}
                   placeholder="Nombre"
+                  disabled={loading}
                   className={`w-full border rounded-md p-2 
                   text-gray-600 
                   placeholder:text-gray-500 
@@ -179,6 +202,7 @@ export default function RegisterForm() {
                   value={form.apellido}
                   onChange={handleChange}
                   placeholder="Apellido"
+                  disabled={loading}
                   className={`w-full border rounded-md p-2 
                   text-gray-600 
                   placeholder:text-gray-500 
@@ -208,6 +232,7 @@ export default function RegisterForm() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder="tucorreo@ejemplo.com"
+                disabled={loading}
                 className={`w-full border rounded-md p-2 
                 text-gray-600 
                 placeholder:text-gray-500 
@@ -218,7 +243,7 @@ export default function RegisterForm() {
                     ? "border-red-400"
                     : "border-[#E2E3D9] focus:border-[#A1C1BE]"
                   } bg-[#FFFF]`}
-                />
+              />
 
               {errors.email && (
                 <p className="text-red-500 text-sm">{errors.email}</p>
@@ -237,6 +262,7 @@ export default function RegisterForm() {
                   value={form.password}
                   onChange={handleChange}
                   placeholder="••••••••"
+                  disabled={loading}
                   className={`w-full border rounded-md p-2 
                   text-gray-600 
                   placeholder:text-gray-500 
@@ -247,7 +273,7 @@ export default function RegisterForm() {
                       ? "border-red-400"
                       : "border-[#E2E3D9] focus:border-[#A1C1BE]"
                     } bg-[#FFFF]`}
-                  />
+                />
 
                 {errors.password && (
                   <p className="text-red-500 text-sm">{errors.password}</p>
@@ -264,6 +290,7 @@ export default function RegisterForm() {
                   value={form.confirmPassword}
                   onChange={handleChange}
                   placeholder="••••••••"
+                  disabled={loading}
                   className={`w-full border rounded-md p-2 
                 text-gray-600 
                 placeholder:text-gray-500 
@@ -283,9 +310,10 @@ export default function RegisterForm() {
 
             <button
               type="submit"
-              className="w-full bg-[#A1C1BE] hover:bg-[#89B1AC] text-[#FFFF] font-medium rounded-md p-2"
+              disabled={loading}
+              className="w-full bg-[#A1C1BE] hover:bg-[#89B1AC] text-[#FFFF] font-medium rounded-md p-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Crear cuenta
+              {loading ? "Creando cuenta..." : "Crear cuenta"}
             </button>
           </form>
 

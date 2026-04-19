@@ -27,3 +27,5 @@ coverage/
 
 # Docker
 .docker/data/
+
+Get-Content .gitignore | findstr ".env"

@@ -31,21 +31,20 @@ public class AuthService {
     }
 
     public User register(User user) {
-        if (!StringUtils.hasText(user.getPassword())) {
+        if (!StringUtils.hasText(user.getContraseña())) {  // 👈 Cambiado a getContraseña()
             throw new IllegalArgumentException("La contraseña no puede estar vacía");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setContraseña(passwordEncoder.encode(user.getContraseña()));  // 👈 Cambiado a setContraseña()
         return userRepository.save(user);
     }
 
-    public String login(String username, String password) {
+    public String login(String email, String password) {  // 👈 El parámetro es email, no username
         // Authenticate using Spring Security's AuthenticationManager
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(username, password)
+            new UsernamePasswordAuthenticationToken(email, password)  // 👈 email como username
         );
         
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-return jwtService.generateToken(userDetails);
-
+        return jwtService.generateToken(userDetails);
     }
 }

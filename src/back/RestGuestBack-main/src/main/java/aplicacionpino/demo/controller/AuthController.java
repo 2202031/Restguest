@@ -4,6 +4,11 @@ import aplicacionpino.demo.dto.LoginRequest;
 import aplicacionpino.demo.dto.RegisterRequest;
 import aplicacionpino.demo.model.User;
 import aplicacionpino.demo.service.AuthService;
+
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +23,21 @@ public class AuthController {
         this.authService = authService;
     }
 
+
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
         User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword()); // El servicio se encargará de hashearla
+        user.setNombre(request.getNombre());
         user.setEmail(request.getEmail());
+        user.setContraseña(request.getContraseña());
+        
+        // Valores por defecto para campos obligatorios
+        user.setRolId(1);
+        user.setSucursalId(1);
+        user.setActiva(true);
+        user.setFechaContratacion(LocalDate.now());
+        user.setSalario(BigDecimal.ZERO);
+
         
         User registeredUser = authService.register(user);
         return ResponseEntity.ok(registeredUser);
@@ -31,10 +45,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        String jwtToken = authService.login(request.getUsername(), request.getPassword());
+        String jwtToken = authService.login(request.getEmail(), request.getPassword());
         return ResponseEntity.ok(jwtToken);
     }
-
     // Opcional: Endpoint para logout (registrar en logs)
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
