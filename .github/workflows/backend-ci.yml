@@ -61,20 +61,6 @@ jobs:
       # 🔥 NUEVO: Prueba real de conexión a Azure SQL
 
 
-      - name: Probar conexión a Azure SQL
-        run: |
-          # Instalar sqlcmd
-          curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-          curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
-          sudo apt-get update
-          sudo apt-get install -y mssql-tools18 unixodbc-dev
-          # Agregar al PATH y ejecutar consulta
-          export PATH="$PATH:/opt/mssql-tools18/bin"
-          sqlcmd -S restguestserver.database.windows.net -d RestGuestDB -U adminrestguest -P "${{ secrets.AZURE_SQL_PASSWORD }}" -Q "SELECT COUNT(*) FROM personal;"
-          env:
-            AZURE_SQL_PASSWORD: ${{ secrets.AZURE_SQL_PASSWORD }}
-
-
 
       - name: 🚀 Disparar despliegue en Render
         run: |
