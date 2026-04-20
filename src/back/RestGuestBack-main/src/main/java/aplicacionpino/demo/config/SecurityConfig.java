@@ -30,7 +30,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/api/auth/**", 
-                    "/db/**",           // Endpoints de base de datos
+                    "/db/**",
+                    "/api/empresas/**",           // Endpoints de base de datos
                     "/api/users/**",    // Endpoints de usuarios
                     "/health",          // Health check
                     "/tables-simple",   // Tablas simples
