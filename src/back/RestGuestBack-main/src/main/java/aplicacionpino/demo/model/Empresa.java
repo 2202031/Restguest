@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Table(name = "empresas")
 public class Empresa {
 
+    @JsonIgnore   // 👈 AGREGAR ESTA LÍNEA AQUÍ
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,6 +20,7 @@ public class Empresa {
     @Column(length = 20)
     private String rfc;
 
+    @JsonIgnore   // 👈 AGREGAR ESTA LÍNEA AQUÍ
     @Column(name = "creado_en")
     private LocalDateTime creadoEn;
 
