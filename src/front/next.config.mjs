@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Esta línea es crucial para despliegues en contenedores como App Service
-  output: 'standalone', 
-  // ... otras configuraciones que ya tenías
+  /* config options here */
+  reactCompiler: true,
+  images: {
+    domains: ['images.unsplash.com', 'plus.unsplash.com'],
+  },
 };
 
 export default nextConfig;
