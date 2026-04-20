@@ -59,10 +59,3 @@ jobs:
           echo "✅ Secrets configurados correctamente"
 
       # 🔥 NUEVO: Prueba real de conexión a Azure SQL
-
-
-
-      - name: 🚀 Disparar despliegue en Render
-        run: |
-          echo "🚀 Disparando despliegue en Render..."
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}    
