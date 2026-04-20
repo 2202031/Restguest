@@ -23,7 +23,6 @@ jobs:
       - name: Compilar y ejecutar pruebas unitarias
         run: |
           cd src/back/RestGuestBack-main
-          # Si tienes pruebas que requieren BD, usa H2 en test profile
           mvn clean test
       - name: Empaquetar JAR
         run: |
@@ -35,7 +34,7 @@ jobs:
           name: restguest-backend-jar
           path: src/back/RestGuestBack-main/target/*.jar
 
-  despliegue-simulado:
+  despliegue:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -46,6 +45,10 @@ jobs:
         with:
           name: restguest-backend-jar
           path: ./backend-artifact
+      
+
+
+
       - name: Verificar que los secrets existen (no se muestran)
         env:
           AZURE_SQL_URL: ${{ secrets.AZURE_SQL_URL }}
@@ -54,9 +57,23 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           echo "✅ Secrets configurados correctamente"
-          # Opcional: probar conexión a Azure SQL con un script rápido
-          # (requiere instalar sqlcmd o usar curl, pero no es necesario para simulación)
-      - name: Ejecutar despliegue simulado
+
+      # 🔥 NUEVO: Prueba real de conexión a Azure SQL
+      - name: Probar conexión a Azure SQL
         run: |
-          chmod +x backend-scripts/deploy/deploy-prod.sh
-          ./backend-scripts/deploy/deploy-prod.sh ./backend-artifact/*.jar --auto
+          # Instalar sqlcmd
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+          curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
+          sudo apt-get update
+          sudo apt-get install -y mssql-tools18 unixodbc-dev
+          echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+          source ~/.bashrc
+          # Ejecutar consulta de prueba (reemplaza con el nombre real de tu BD)
+          sqlcmd -S restguestserver.database.windows.net -d RestGuestDB -U adminrestguest -P "${{ secrets.AZURE_SQL_PASSWORD }}" -Q "SELECT COUNT(*) FROM personal;"
+        env:
+          AZURE_SQL_PASSWORD: ${{ secrets.AZURE_SQL_PASSWORD }}
+
+      - name: 🚀 Disparar despliegue en Render
+        run: |
+          echo "🚀 Disparando despliegue en Render..."
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}    
