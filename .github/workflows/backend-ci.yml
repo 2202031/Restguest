@@ -9,6 +9,7 @@ on:
     branches: [ main ]
     paths:
       - 'src/back/**'
+  workflow_dispatch:    
 
 jobs:
   build-and-test:
@@ -59,8 +60,6 @@ jobs:
           echo "✅ Secrets configurados correctamente"
 
       # 🔥 NUEVO: Prueba real de conexión a Azure SQL
-
-
 
 
       - name: 🚀 Disparar despliegue en Render
