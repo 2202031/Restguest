@@ -1,5 +1,6 @@
 package aplicacionpino.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;  // 👈 IMPORT necesario
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ public class Empresa {
     @Column(nullable = false, length = 100)
     private String nombre;
 
+    @JsonIgnore   // 👈 AGREGAR ESTA LÍNEA AQUÍ
     @Column(length = 20)
     private String rfc;
 
